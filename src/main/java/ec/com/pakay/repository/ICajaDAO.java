@@ -10,11 +10,10 @@ import java.util.List;
 
 @Repository
 public interface ICajaDAO extends JpaRepository<Caja, Integer> {
-	List<Caja> findByIdEmpresa(Integer empresa);
+
+	Boolean existsByNombre(String nombre);
 	
-	Boolean existsByIdEmpresaAndNombre(Integer idEmpresa, String cod);
-	
-	@Query("select count(1) from Caja c where c.idEmpresa = :idEmpresa and c.nombre = :nombre and c.id != :id")
-	int existsByIdEmpresaAndNombreAndNotId(@Param("idEmpresa") Integer idEmpresa, @Param("nombre") String cod, @Param("id") Integer id);
+	@Query("select count(1) from Caja c where c.nombre = :nombre and c.id != :id")
+	int existsByNombreAndNotId(@Param("nombre") String nombre, @Param("id") Integer id);
 	
 }

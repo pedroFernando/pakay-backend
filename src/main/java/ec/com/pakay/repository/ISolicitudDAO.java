@@ -12,10 +12,8 @@ import java.util.List;
 @Repository
 public interface ISolicitudDAO extends JpaRepository<Solicitud, Integer> {
 	
-	List<Solicitud> findByIdEmpresa(Integer idEmpresa);
-	
-	@Query(value = "CALL ConsultaPrestamo(:idEmpresa, :idSocio, :fechaDesde, :fechaHasta)", nativeQuery = true)
-	List<Object[]> filtrar(@Param("idEmpresa") Integer idEmpresa, @Param("idSocio") Integer idSocio,
+	@Query(value = "CALL ConsultaPrestamo(:idSocio, :fechaDesde, :fechaHasta)", nativeQuery = true)
+	List<Object[]> filtrar(@Param("idSocio") Integer idSocio,
 			@Param("fechaDesde") Date fechaDesde, @Param("fechaHasta") Date fechaHasta);
 	
 }

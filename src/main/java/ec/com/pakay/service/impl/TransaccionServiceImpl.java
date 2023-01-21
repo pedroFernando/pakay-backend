@@ -1,6 +1,5 @@
 package ec.com.pakay.service.impl;
 
-import ec.com.pakay.domain.Auditoria;
 import ec.com.pakay.domain.Caja;
 import ec.com.pakay.domain.Documento;
 import ec.com.pakay.domain.Transaccion;
@@ -10,7 +9,7 @@ import ec.com.pakay.domain.dto.TransaccionStore;
 import ec.com.pakay.report.RpSocioEmpresa;
 import ec.com.pakay.repository.*;
 import ec.com.pakay.service.ITransaccionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,22 +21,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class TransaccionServiceImpl implements ITransaccionService {
 
-	@Autowired
-	private ITransaccionDAO dao;
-	
-	@Autowired
-	private IAuditoriaDAO auDAO;
-	
-	@Autowired
-	private IDocumentoDAO docDAO;
-	
-	@Autowired
-	private IDocumentoEmpresaDAO docEmpDAO;
-	
-	@Autowired
-	private ICajaDAO cajaDAO;
+	private final ITransaccionDAO dao;
+
+	private final IDocumentoDAO docDAO;
+
+	private final IDocumentoDAO docEmpDAO;
+
+	private final ICajaDAO cajaDAO;
 	
 	@Override
 	public Transaccion findById(Integer idTransaccion) {
@@ -45,20 +38,20 @@ public class TransaccionServiceImpl implements ITransaccionService {
 	}
 
 	@Override
-	public List<Transaccion> listByEmpresa(Integer idEmpresa) {
-		return dao.findByIdEmpresa(idEmpresa);
+	public List<Transaccion> findAll() {
+		return dao.findAll();
 	}
 	
 	@Override
-	public List<Transaccion> listByEmpresaAndDocumento(Integer idEmpresa, String doc) {
+	public List<Transaccion> listByDocumento(String doc) {
 		List<Documento> documento = docDAO.findById(doc);
-		return dao.findByIdEmpresaAndDocumento(idEmpresa, documento.get(0));
+		return dao.findByDocumento(documento.get(0));
 	}
 	
 	@Override
 	public TransaccionDTO filtrar(TransaccionConsulta consulta) {
 		TransaccionDTO trDTO = new TransaccionDTO();
-		List<Object[]> resp = dao.filtrar(consulta.getIdEmpresa(), consulta.getIdSocio(), consulta.getCodDocumento(),
+		List<Object[]> resp = dao.filtrar(consulta.getIdSocio(), consulta.getCodDocumento(),
 				Optional.ofNullable(consulta.getFechaDesde()).map(Date::valueOf).orElse(null),
 				Optional.ofNullable(consulta.getFechaHasta()).map(Date::valueOf).orElse(null));
 		try {
@@ -117,15 +110,11 @@ public class TransaccionServiceImpl implements ITransaccionService {
 	
 	@Override
 	@Transactional
-	public Transaccion save(Transaccion transaccion, Auditoria auditoria) {
+	public Transaccion save(Transaccion transaccion) {
 		try {
-			transaccion.setNumero(docEmpDAO.consultaSiguiente(transaccion.getIdEmpresa(), transaccion.getDocumento().getId()));
+			transaccion.setNumero(docEmpDAO.consultaSiguiente(transaccion.getDocumento().getId()));
 			transaccion = dao.save(transaccion);
-			auditoria.setIdTabla(transaccion.getId().longValue());
-			auditoria.setRegistro(transaccion.toString());
-			auDAO.save(auditoria);
-			
-			Auditoria aud = new Auditoria();
+
 			Documento doc = docDAO.findById(transaccion.getDocumento().getId()).get(0);
 			Caja caja = cajaDAO.findById(transaccion.getCaja().getId()).get();
 			if(doc.getTipo().equals("I")) {
@@ -134,15 +123,6 @@ public class TransaccionServiceImpl implements ITransaccionService {
 				caja.setMonto(caja.getMonto().subtract(transaccion.getValor()));
 			}
 			caja = cajaDAO.save(caja);
-			aud.setEntidad("Caja");
-			aud.setTabla("caja");
-			aud.setAccion("U");
-			aud.setIdTabla(caja.getId().longValue());
-			aud.setRegistro(caja.toString());
-			aud.setAplicacion(auditoria.getAplicacion());
-			aud.setIp(auditoria.getIp());
-			aud.setUsuario(auditoria.getUsuario());
-			auDAO.save(aud);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -151,10 +131,9 @@ public class TransaccionServiceImpl implements ITransaccionService {
 
 	@Override
 	@Transactional
-	public void delete(Integer idTransaccion, Auditoria auditoria) {
+	public void delete(Integer idTransaccion) {
 		Transaccion transaccion = dao.findById(idTransaccion).get();
 		dao.delete(transaccion);
-		auDAO.save(auditoria);
 	}
 
 }

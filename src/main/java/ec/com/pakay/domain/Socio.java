@@ -10,9 +10,6 @@ public class Socio {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_socio")
 	private Integer id;
-
-	@Column(name = "id_empresa")
-	private Integer idEmpresa;
 	
 	@Column(name = "cedula")
 	private String cedula;
@@ -45,14 +42,6 @@ public class Socio {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Integer getIdEmpresa() {
-		return idEmpresa;
-	}
-
-	public void setIdEmpresa(Integer idEmpresa) {
-		this.idEmpresa = idEmpresa;
 	}
 
 	public String getCedula() {
@@ -97,7 +86,7 @@ public class Socio {
 
 	@Override
 	public String toString() {
-		return "{id:" + id + ", idEmpresa:" + idEmpresa + ", cedula:" + cedula + ", nombres:" + nombres
+		return "{id:" + id + ", cedula:" + cedula + ", nombres:" + nombres
 				+ ", apellidos:" + apellidos + ", direccion:" + (direccion==null?"":direccion) + ", "
 				+ "telefono:" + (telefono==null?"":telefono) + ", tipo:" + tipo +"}";
 	}

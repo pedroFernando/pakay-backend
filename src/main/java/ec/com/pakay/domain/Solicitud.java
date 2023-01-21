@@ -17,9 +17,6 @@ public class Solicitud {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_solicitud")
     private Integer id;
-	
-    @Column(name = "id_empresa")
-    private Integer idEmpresa;
     
     @Column(name = "fecha_solicitud")
 	@Convert(converter = LocalDateConverter.class)
@@ -79,14 +76,6 @@ public class Solicitud {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Integer getIdEmpresa() {
-		return idEmpresa;
-	}
-
-	public void setIdEmpresa(Integer idEmpresa) {
-		this.idEmpresa = idEmpresa;
 	}
 
 	public LocalDate getFechaSolicitud() {
@@ -203,7 +192,7 @@ public class Solicitud {
 
 	@Override
 	public String toString() {
-		return "{id:" + id + ", idEmpresa:" + idEmpresa + ", fechaSolicitud:" + fechaSolicitud
+		return "{id:" + id + ", fechaSolicitud:" + fechaSolicitud
 				+ ", fechaAprobacion:" + fechaAprobacion + ", monto:" + Numeros.getFormatoDecimales(monto.doubleValue()) 
 				+ ", plazo:" + plazo + ", interes:" + Numeros.getFormatoDecimales(interes.doubleValue()) + ", tipo:" + tipo 
 				+ ", amortizacion:" + amortizacion + ", estado:" + estado + ", saldo:" + Numeros.getFormatoDecimales(saldo.doubleValue()) 

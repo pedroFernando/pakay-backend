@@ -11,9 +11,9 @@ import java.util.List;
 @Repository
 public interface ISocioDAO extends JpaRepository<Socio, Integer> {
 	
-	List<Socio> findByIdEmpresaAndTipo(Integer empresa, String tipo);
-	Boolean existsByIdEmpresaAndCedula(Integer idEmpresa, String cedula);
-	@Query("select count(1) from Socio s where s.idEmpresa = :idEmpresa and s.cedula = :cedula and s.id != :id")
-	int existsByIdEmpresaAndCedulaAndNotId(@Param("idEmpresa") Integer idEmpresa, @Param("cedula") String cedula, @Param("id") Integer id);
+	List<Socio> findByTipo(String tipo);
+	Boolean existsByCedula(String cedula);
+	@Query("select count(1) from Socio s where s.cedula = :cedula and s.id != :id")
+	int existsByCedulaAndNotId(@Param("cedula") String cedula, @Param("id") Integer id);
 	
 }

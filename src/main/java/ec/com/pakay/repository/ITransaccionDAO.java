@@ -13,12 +13,10 @@ import java.util.List;
 @Repository
 public interface ITransaccionDAO extends JpaRepository<Transaccion, Integer> {
 	
-	List<Transaccion> findByIdEmpresa(Integer empresa);
+	List<Transaccion> findByDocumento(Documento documento);
 	
-	List<Transaccion> findByIdEmpresaAndDocumento(Integer empresa, Documento documento);
-	
-	@Query(value = "CALL ConsultaTransaccion(:idEmpresa, :idSocio, :codDoc, :fechaDesde, :fechaHasta)", nativeQuery = true)
-	List<Object[]> filtrar(@Param("idEmpresa") Integer idEmpresa, @Param("idSocio") Integer idSocio,
+	@Query(value = "CALL ConsultaTransaccion(:idSocio, :codDoc, :fechaDesde, :fechaHasta)", nativeQuery = true)
+	List<Object[]> filtrar(@Param("idSocio") Integer idSocio,
 			@Param("codDoc") String codDoc, @Param("fechaDesde") Date fechaDesde, @Param("fechaHasta") Date fechaHasta);
 	
 	@Query(value = "CALL ConsultaSocio(:idSocio)", nativeQuery = true)

@@ -19,9 +19,6 @@ public class Transaccion {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_transaccion")
 	private Integer id;
-
-	@Column(name = "id_empresa")
-	private Integer idEmpresa;
 	
 	@Column(name = "numero")
 	private String numero;
@@ -76,14 +73,6 @@ public class Transaccion {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Integer getIdEmpresa() {
-		return idEmpresa;
-	}
-
-	public void setIdEmpresa(Integer idEmpresa) {
-		this.idEmpresa = idEmpresa;
 	}
 
 	public String getNumero() {
@@ -144,7 +133,7 @@ public class Transaccion {
 
 	@Override
 	public String toString() {
-		return "{id:" + id + ", idEmpresa:" + idEmpresa + ", numero:" + numero
+		return "{id:" + id + ", numero:" + numero
 				+ ", fecha:" + fecha + ", valor:" + Numeros.getFormatoDecimales(valor.doubleValue()) 
 				+ ", descripcion:" + descripcion + ", socio:" + (socio==null?"":socio.getId())
 				+ ", documento:" + documento.getId() + ", caja:" + caja.getId() + ", mes:"+ mes +"}";

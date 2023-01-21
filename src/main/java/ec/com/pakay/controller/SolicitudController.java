@@ -1,60 +1,43 @@
 package ec.com.pakay.controller;
 
-import ec.com.pakay.domain.Auditoria;
 import ec.com.pakay.domain.Solicitud;
-import ec.com.pakay.domain.aut.Aplicacion;
-import ec.com.pakay.domain.aut.UsuarioAuditoria;
 import ec.com.pakay.domain.dto.SolicitudDTO;
 import ec.com.pakay.domain.dto.TransaccionConsulta;
 import ec.com.pakay.service.ISolicitudService;
 import ec.com.pakay.util.Respuesta;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/solicitud")
 public class SolicitudController {
 
-	@Autowired
-	private ISolicitudService service;
+	private final ISolicitudService service;
 
-	private final static String TABLA = "solicitud";
-	private final static String ENTIDAD = "Solicitud";
-
-	@GetMapping(value = "/listar/{idEmpresa}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Solicitud>> listByEmpresa(@PathVariable("idEmpresa") Integer idEmpresa) {
-		List<Solicitud> obj = new ArrayList<>();
-		try {
-			obj = service.listByEmpresa(idEmpresa);
-		} catch (Exception e) {
-			return new ResponseEntity<List<Solicitud>>(obj, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<List<Solicitud>>(obj, HttpStatus.OK);
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Solicitud>> getAll() {
+		log.info("Get all.");
+		return  ResponseEntity.ok(this.service.findAll());
 	}
 
-	@GetMapping(value = "/buscar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Solicitud> findById(@PathVariable("id") Integer id) {
-		Solicitud obj = new Solicitud();
-		try {
-			obj = service.findById(id);
-		} catch (Exception e) {
-			return new ResponseEntity<Solicitud>(obj, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<Solicitud>(obj, HttpStatus.OK);
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Solicitud> findById(@PathVariable Integer id) {
+		log.info("Get by id. id=" + id);
+		return ResponseEntity.ok(this.service.findById(id));
 	}
 
-	@PostMapping(value = "/registrar/{idUser}&{ip}&{codApp}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Respuesta> registrar(@RequestBody Solicitud solicitud, @PathVariable("idUser") Integer idUser,
-			@PathVariable("ip") String ip, @PathVariable("codApp") String codApp) {
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Respuesta> create(@RequestBody Solicitud solicitud) {
 		try {
-			service.save(solicitud, new Auditoria(TABLA, ENTIDAD, 0L, Auditoria.CREATE, "{}", ip, new Aplicacion(codApp),
-					new UsuarioAuditoria(idUser)));
+			service.save(solicitud);
 		} catch (Exception e) {
 			System.out.println("Error registro prestamo: " +  e.getMessage());
 			return new ResponseEntity<Respuesta>(Respuesta.getInstance().setCodigo(Respuesta.ERROR_INTERNO),
@@ -64,12 +47,10 @@ public class SolicitudController {
 				HttpStatus.OK);
 	}
 
-	@PutMapping(value = "/actualizar/{idUser}&{ip}&{codApp}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Respuesta> actualizar(@RequestBody Solicitud solicitud, @PathVariable("idUser") Integer idUser,
-			@PathVariable("ip") String ip, @PathVariable("codApp") String codApp) {
+	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Respuesta> actualizar(@RequestBody Solicitud solicitud, @PathVariable Integer id) {
 		try {
-			service.save(solicitud, new Auditoria(TABLA, ENTIDAD, 0L, Auditoria.UPDATE, "{}", ip, new Aplicacion(codApp),
-					new UsuarioAuditoria(idUser)));
+			service.save(solicitud);
 		} catch (Exception e) {
 			return new ResponseEntity<Respuesta>(Respuesta.getInstance().setCodigo(Respuesta.ERROR_INTERNO),
 					HttpStatus.INTERNAL_SERVER_ERROR);
@@ -78,17 +59,11 @@ public class SolicitudController {
 				HttpStatus.OK);
 	}
 
-	@DeleteMapping(value = "/eliminar/{id}&{idUser}&{ip}&{codApp}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Respuesta> eliminar(@PathVariable Integer id, @PathVariable("idUser") Integer idUser,
-			@PathVariable("ip") String ip, @PathVariable("codApp") String codApp) {
-		try {
-			service.delete(id, new Auditoria(TABLA, ENTIDAD, id.longValue(), Auditoria.DELETE, "{}", ip,
-					new Aplicacion(codApp), new UsuarioAuditoria(idUser)));
-		} catch (Exception e) {
-			return new ResponseEntity<Respuesta>(Respuesta.getInstance().setCodigo(Respuesta.ERROR_INTERNO),
-					HttpStatus.OK);
-		}
-		return new ResponseEntity<Respuesta>(Respuesta.getInstance(), HttpStatus.OK);
+	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Respuesta> eliminar(@PathVariable Integer id) {
+		log.info("Delete. id=" + id);
+		this.service.delete(id);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@PostMapping(value = "/filtrar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

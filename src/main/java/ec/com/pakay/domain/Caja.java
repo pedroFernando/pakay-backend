@@ -15,9 +15,6 @@ public class Caja {
 	@Column(name = "id_caja")
 	private Integer id;
 
-	@Column(name = "id_empresa")
-	private Integer idEmpresa;
-
 	@Column(name = "nombre")
 	private String nombre;
 
@@ -39,14 +36,6 @@ public class Caja {
 		this.id = id;
 	}
 
-	public Integer getIdEmpresa() {
-		return idEmpresa;
-	}
-
-	public void setIdEmpresa(Integer idEmpresa) {
-		this.idEmpresa = idEmpresa;
-	}
-
 	public String getNombre() {
 		return nombre;
 	}
@@ -65,7 +54,7 @@ public class Caja {
 
 	@Override
 	public String toString() {
-		return "{id:" + id + ", idEmpresa;" + idEmpresa + ", nombre:" + nombre 
+		return "{id:" + id + ", nombre:" + nombre
 				+ ", monto:" + Numeros.getFormatoDecimales(monto.doubleValue()) + "}";
 	}
 

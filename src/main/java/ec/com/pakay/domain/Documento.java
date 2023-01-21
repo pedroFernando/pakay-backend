@@ -17,6 +17,9 @@ public class Documento {
 	@Column(name = "tipo")
 	private String tipo;
 
+	@Column(name = "secuencial")
+	private Integer secuencial;
+
 	public Documento() {
 	}
 
@@ -51,6 +54,14 @@ public class Documento {
 
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
+	}
+
+	public Integer getSecuencial() {
+		return secuencial;
+	}
+
+	public void setSecuencial(Integer secuencial) {
+		this.secuencial = secuencial;
 	}
 
 }

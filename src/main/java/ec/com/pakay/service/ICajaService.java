@@ -1,6 +1,5 @@
 package ec.com.pakay.service;
 
-import ec.com.pakay.domain.Auditoria;
 import ec.com.pakay.domain.Caja;
 import ec.com.pakay.domain.dto.CajaDTO;
 
@@ -8,17 +7,17 @@ import java.util.List;
 
 public interface ICajaService {
 
-	Caja save(Caja caja, Auditoria auditoria);
+	Caja save(Caja caja);
 	
-	void egresoIngreso(CajaDTO cajaDTO, Auditoria auditoria);
+	void egresoIngreso(CajaDTO cajaDTO);
 	
-	void transferir(CajaDTO cajaDTO, Auditoria auditoria);
+	void transferir(CajaDTO cajaDTO);
 
-	void delete(Integer idCaja, Auditoria auditoria);
+	void delete(Integer idCaja);
 
 	Caja findById(Integer idCaja);
 
-	List<Caja> listByEmpresa(Integer idEmpresa);
+	List<Caja> findAll();
 
 	Boolean exists(Caja caja);
 	
